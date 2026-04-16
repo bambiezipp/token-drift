@@ -49,4 +49,20 @@ describe('formatDiff', () => {
     const output = formatDiff(diff, false);
     expect(output).not.toMatch(/\x1b\[/);
   });
+
+  it('shows summary counts for multiple changes', () => {
+    const diff: DiffResult = {
+      added: [{ key: 'a', type: 'added', newValue: '1' }],
+      removed: [{ key: 'b', type: 'removed', oldValue: '2' }],
+      modified: [
+        { key: 'c', type: 'modified', oldValue: '3', newValue: '4' },
+        { key: 'd', type: 'modified', oldValue: '5', newValue: '6' },
+      ],
+      unchanged: [],
+    };
+    const output = formatDiff(diff, false);
+    expect(output).toContain('1 added');
+    expect(output).toContain('1 removed');
+    expect(output).toContain('2 modified');
+  });
 });
