@@ -50,3 +50,16 @@ export function diffTokens(
 export function hasDrift(diff: DiffResult): boolean {
   return diff.added.length > 0 || diff.removed.length > 0 || diff.modified.length > 0;
 }
+
+/**
+ * Returns a summary of the diff result with counts for each change type.
+ */
+export function diffSummary(diff: DiffResult): Record<string, number> {
+  return {
+    added: diff.added.length,
+    removed: diff.removed.length,
+    modified: diff.modified.length,
+    unchanged: diff.unchanged.length,
+    total: diff.added.length + diff.removed.length + diff.modified.length + diff.unchanged.length,
+  };
+}
