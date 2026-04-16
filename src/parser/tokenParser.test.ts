@@ -48,6 +48,13 @@ describe('parseTokenFile', () => {
     fs.unlinkSync(file);
   });
 
+  it('returns an empty map for an empty token file', () => {
+    const file = writeTempJson({});
+    const result = parseTokenFile(file);
+    expect(Object.keys(result)).toHaveLength(0);
+    fs.unlinkSync(file);
+  });
+
   it('throws if file does not exist', () => {
     expect(() => parseTokenFile('/nonexistent/tokens.json')).toThrow(
       'Token file not found'
