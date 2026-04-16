@@ -1,0 +1,15 @@
+# Typescript
+
+node_modules/
+
+build/
+coverage/
+npm-debug.log*
+*.js.map
+Thumbs.db
+.env.local
+.env
+.cache/
+.next/
+.DS_Store
+Desktop.ini
