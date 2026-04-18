@@ -65,4 +65,15 @@ describe('formatDiff', () => {
     expect(output).toContain('1 removed');
     expect(output).toContain('2 modified');
   });
+
+  it('does not show Added/Removed/Modified sections when empty', () => {
+    const diff: DiffResult = {
+      ...emptyDiff,
+      modified: [{ key: 'color.primary', type: 'modified', oldValue: '#000', newValue: '#111' }],
+    };
+    const output = formatDiff(diff, false);
+    expect(output).not.toContain('Added:');
+    expect(output).not.toContain('Removed:');
+    expect(output).toContain('Modified:');
+  });
 });
