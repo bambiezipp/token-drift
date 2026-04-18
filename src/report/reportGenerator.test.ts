@@ -19,6 +19,13 @@ describe('generateTextReport', () => {
     const result = generateTextReport(sampleDiffs);
     expect(result).toBeTruthy();
   });
+
+  it('includes all token names in output', () => {
+    const result = generateTextReport(sampleDiffs);
+    expect(result).toContain('color.primary');
+    expect(result).toContain('spacing.md');
+    expect(result).toContain('font.size.sm');
+  });
 });
 
 describe('generateJsonReport', () => {
@@ -31,6 +38,14 @@ describe('generateJsonReport', () => {
   it('returns zero count for empty diffs', () => {
     const result = JSON.parse(generateJsonReport([]));
     expect(result.driftCount).toBe(0);
+  });
+
+  it('preserves token diff fields in output', () => {
+    const result = JSON.parse(generateJsonReport(sampleDiffs));
+    const modified = result.diffs.find((d: TokenDiff) => d.token === 'color.primary');
+    expect(modified.type).toBe('modified');
+    expect(modified.oldValue).toBe('#000');
+    expect(modified.newValue).toBe('#fff');
   });
 });
 
@@ -52,6 +67,15 @@ describe('generateReport with outputPath', () => {
     const tmpPath = path.join(os.tmpdir(), 'token-drift-test', 'report.md');
     generateReport(sampleDiffs, { format: 'markdown', outputPath: tmpPath });
     expect(fs.existsSync(tmpPath)).toBe(true);
+    fs.rmSync(path.dirname(tmpPath), { recursive: true });
+  });
+
+  it('writes json report file to disk', () => {
+    const tmpPath = path.join(os.tmpdir(), 'token-drift-test-json', 'report.json');
+    generateReport(sampleDiffs, { format: 'json', outputPath: tmpPath });
+    expect(fs.existsSync(tmpPath)).toBe(true);
+    const content = JSON.parse(fs.readFileSync(tmpPath, 'utf-8'));
+    expect(content.driftCount).toBe(3);
     fs.rmSync(path.dirname(tmpPath), { recursive: true });
   });
 });
