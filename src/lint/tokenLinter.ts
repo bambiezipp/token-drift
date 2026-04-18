@@ -72,3 +72,19 @@ export function formatLintResults(results: LintResult[]): string {
     .map((r) => `[${r.severity.toUpperCase()}] (${r.rule}) ${r.message}`)
     .join('\n');
 }
+
+/**
+ * Groups lint results by severity, returning a map of severity to results.
+ * Useful for displaying errors and warnings in separate sections.
+ */
+export function groupLintResultsBySeverity(
+  results: LintResult[]
+): Record<LintSeverity, LintResult[]> {
+  return results.reduce(
+    (acc, result) => {
+      acc[result.severity].push(result);
+      return acc;
+    },
+    { error: [], warning: [] } as Record<LintSeverity, LintResult[]>
+  );
+}
