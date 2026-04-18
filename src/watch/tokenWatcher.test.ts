@@ -9,6 +9,16 @@ function writeTempJson(data: object): string {
   return file;
 }
 
+function cleanupFiles(...files: string[]): void {
+  for (const file of files) {
+    try {
+      fs.unlinkSync(file);
+    } catch {
+      // ignore cleanup errors
+    }
+  }
+}
+
 describe('watchTokenFile', () => {
   it('calls onDrift when target differs from baseline', (done) => {
     const baselineFile = writeTempJson({ color: { primary: { value: '#000' } } });
@@ -21,8 +31,7 @@ describe('watchTokenFile', () => {
       onDrift: (output) => {
         expect(output).toContain('color.primary');
         handle.stop();
-        fs.unlinkSync(baselineFile);
-        fs.unlinkSync(targetFile);
+        cleanupFiles(baselineFile, targetFile);
         done();
       },
     });
@@ -42,8 +51,7 @@ describe('watchTokenFile', () => {
 
     setTimeout(() => {
       handle.stop();
-      fs.unlinkSync(baselineFile);
-      fs.unlinkSync(targetFile);
+      cleanupFiles(baselineFile, targetFile);
       expect(driftCalled).toBe(false);
       done();
     }, 350);
