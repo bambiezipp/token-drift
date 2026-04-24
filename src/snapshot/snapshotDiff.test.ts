@@ -60,3 +60,17 @@ test('diffSnapshots includes version and timestamp metadata', () => {
   expect(result.fromTimestamp).toBeDefined();
   expect(result.toTimestamp).toBeDefined();
 });
+
+test('diffSnapshots does not report unchanged tokens as added, removed, or modified', () => {
+  saveSnapshot(v1Tokens, '1.0.0', tmpDir);
+  saveSnapshot(v2Tokens, '2.0.0', tmpDir);
+  const result = diffSnapshots('1.0.0', '2.0.0', tmpDir);
+  expect(result.diff.added['spacing.sm']).toBeUndefined();
+  expect(result.diff.removed['spacing.sm']).toBeUndefined();
+  expect(result.diff.modified['spacing.sm']).toBeUndefined();
+});
+
+test('diffSnapshots throws when a snapshot version does not exist', () => {
+  saveSnapshot(v1Tokens, '1.0.0', tmpDir);
+  expect(() => diffSnapshots('1.0.0', '9.9.9', tmpDir)).toThrow();
+});
