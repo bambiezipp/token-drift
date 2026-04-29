@@ -7,6 +7,8 @@ function printUsage() {
   console.log('Usage: token-drift <base-file> <head-file> [--format text|json|markdown] [--output <path>]');
 }
 
+const VALID_FORMATS: ReportFormat[] = ['text', 'json', 'markdown'];
+
 function parseArgs(args: string[]): { base: string; head: string; format: ReportFormat; output?: string } {
   if (args.length < 2) {
     printUsage();
@@ -19,7 +21,12 @@ function parseArgs(args: string[]): { base: string; head: string; format: Report
 
   for (let i = 0; i < rest.length; i++) {
     if (rest[i] === '--format' && rest[i + 1]) {
-      format = rest[++i] as ReportFormat;
+      const requestedFormat = rest[++i] as ReportFormat;
+      if (!VALID_FORMATS.includes(requestedFormat)) {
+        console.error(`Invalid format "${requestedFormat}". Valid options: ${VALID_FORMATS.join(', ')}`);
+        process.exit(1);
+      }
+      format = requestedFormat;
     } else if (rest[i] === '--output' && rest[i + 1]) {
       output = rest[++i];
     }
